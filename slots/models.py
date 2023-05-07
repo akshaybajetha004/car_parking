@@ -13,17 +13,17 @@ class ParkingSlot(models.Model):
 
 
 class ParkingSlotSpace(models.Model):
-    is_booked = models.BooleanField(default=False)
+    is_booked = models.BooleanField(default=False,help_text='availability of space')
     created_at = models.DateTimeField(default=datetime.now)
     updated_at = models.DateTimeField(default=datetime.now)
-    start_time = models.DateTimeField(default=datetime.now)
-    end_time = models.DateTimeField(default=datetime.now)
-    parking_slot = models.ForeignKey(ParkingSlot, on_delete=models.CASCADE)
-    user = models.ForeignKey(CoreUser, on_delete=models.CASCADE)
+    start_time = models.DateTimeField(default=datetime.now,help_text="actual start time of parking hours")
+    end_time = models.DateTimeField(default=datetime.now, help_text='actual end time of parking hours')
+    parking_slot = models.ForeignKey(ParkingSlot, on_delete=models.CASCADE,related_name='parkingslotspaces')
+    user = models.ForeignKey(CoreUser, on_delete=models.CASCADE,related_name='parkingslotspaces')
 
 
 class VehicleType(models.Model):
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255,help_text='type of vehicle eg. car,bus,bike')
 
 
 # how to make an entry in VehicleType DB
@@ -33,9 +33,9 @@ class VehicleType(models.Model):
 
 
 class Vehicle(models.Model):
-    type = models.ForeignKey(VehicleType, on_delete=models.CASCADE)
-    vehicle_no = models.CharField(max_length=10, null=False, blank=False)
-    user = models.ForeignKey(CoreUser, on_delete=models.CASCADE)
+    type = models.ForeignKey(VehicleType, on_delete=models.CASCADE,related_name='vehicles')
+    vehicle_no = models.CharField(max_length=10, null=False, blank=False,help_text='unique vehicle number')
+    user = models.ForeignKey(CoreUser, on_delete=models.CASCADE,related_name='vehicles')
 
 
 # how to make an entry in Vehicle DB
@@ -45,13 +45,15 @@ class Vehicle(models.Model):
 
 
 class Wallet(models.Model):
-    balance = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    user = models.ForeignKey(CoreUser, on_delete=models.CASCADE)
+    balance = models.DecimalField(max_digits=10, decimal_places=2, default=0.00 , help_text="wallet balance")
+    user = models.ForeignKey(CoreUser, on_delete=models.CASCADE, related_name='wallet')
 
 
 class Ledger(models.Model):
-    wallet = models.ForeignKey(Wallet, on_delete=models.CASCADE)
-    amount = models.DecimalField(max_digits=10, decimal_places=2, null=False, blank=False)
+    wallet = models.ForeignKey(Wallet, on_delete=models.CASCADE, related_name='ledger')
+    amount = models.DecimalField(max_digits=10, decimal_places=2, null=False, blank=False,help_text="amount to  be "
+                                                                                                    "credited or "
+                                                                                                    "debited")
     credited = models.BooleanField(default=False)
     debited = models.BooleanField(default=False)
     time = models.DateTimeField(default=datetime.now)
