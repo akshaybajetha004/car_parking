@@ -1,6 +1,8 @@
 from django.db import models
 from datetime import datetime
 
+from user.models import CoreUser
+
 
 class ParkingSlot(models.Model):
     date = models.DateField()
@@ -17,11 +19,12 @@ class ParkingSlotSpace(models.Model):
     start_time = models.DateTimeField(default=datetime.now)
     end_time = models.DateTimeField(default=datetime.now)
     parking_slot = models.ForeignKey(ParkingSlot, on_delete=models.CASCADE)
-    # user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(CoreUser, on_delete=models.CASCADE)
 
 
 class VehicleType(models.Model):
     name = models.CharField(max_length=255)
+
 
 # how to make an entry in VehicleType DB
 # car_type = VehicleType.objects.create(name='Car')
@@ -32,7 +35,8 @@ class VehicleType(models.Model):
 class Vehicle(models.Model):
     type = models.ForeignKey(VehicleType, on_delete=models.CASCADE)
     vehicle_no = models.CharField(max_length=10, null=False, blank=False)
-    # user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(CoreUser, on_delete=models.CASCADE)
+
 
 # how to make an entry in Vehicle DB
 # car = Vehicle.objects.create(type=car_type)
@@ -42,6 +46,7 @@ class Vehicle(models.Model):
 
 class Wallet(models.Model):
     balance = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    user = models.ForeignKey(CoreUser, on_delete=models.CASCADE)
 
 
 class Ledger(models.Model):
@@ -50,4 +55,3 @@ class Ledger(models.Model):
     credited = models.BooleanField(default=False)
     debited = models.BooleanField(default=False)
     time = models.DateTimeField(default=datetime.now)
-
